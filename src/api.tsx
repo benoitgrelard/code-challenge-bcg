@@ -4,7 +4,7 @@ import { Idea } from './types';
 import { DEFAULT_IDEAS } from './data';
 
 export function getIdeas() {
-	return delay(getStoredIdeas());
+	return delay(getStoredIdeas(), getRandomInt(1500, 2000));
 }
 
 export function createIdea() {
@@ -57,9 +57,12 @@ function storeIdeas(ideas: Record<string, Idea>) {
 	window.localStorage.setItem('ideas', JSON.stringify(ideas));
 }
 
-function delay<T>(data: T) {
+function delay<T>(data: T, delayOverride?: number) {
 	return new Promise<T>((resolve, reject) =>
-		setTimeout(() => resolve(data), getRandomInt(100, 600))
+		setTimeout(
+			() => resolve(data),
+			delayOverride !== undefined ? delayOverride : getRandomInt(100, 600)
+		)
 	);
 }
 

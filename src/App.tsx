@@ -1,10 +1,11 @@
 import React, { useEffect, useReducer } from 'react';
-import styled from 'styled-components/macro';
+import styled, { css, keyframes } from 'styled-components/macro';
 import produce from 'immer';
 import { GlobalStyles } from './styles';
 import { getIdeas, createIdea, deleteIdea, updateIdea } from './api';
 import { Idea } from './types';
-import { IdeaTile } from './IdeaTile';
+import { IdeaTile, tileEnterKeyframes } from './IdeaTile';
+import { AddIcon } from './icons';
 
 type State = {
 	isLoading: boolean;
@@ -16,13 +17,12 @@ type SortCriteria = 'title' | 'createdAt';
 
 export function App() {
 	const [state, dispatch] = useReducer(reducer, {
-		isLoading: false,
+		isLoading: true,
 		ideas: {},
 		sortCriteria: 'title',
 	});
 
 	useEffect(() => {
-		dispatch({ type: 'FETCH_IDEAS' });
 		getIdeas().then(ideas =>
 			dispatch({ type: 'IDEAS_FETCHED', payload: ideas })
 		);
@@ -33,19 +33,16 @@ export function App() {
 	return (
 		<>
 			<GlobalStyles />
-			<h1>Ideas Board</h1>
+			<h1
+				css={css`
+					font-size: 3rem;
+					font-weight: 900;
+				`}
+			>
+				Ideas Board
+			</h1>
 
-			<div>
-				<button
-					type="button"
-					onClick={() =>
-						createIdea().then(idea =>
-							dispatch({ type: 'IDEA_CREATED', payload: idea })
-						)
-					}
-				>
-					Add new idea
-				</button>
+			{/* <div>
 				Sort by{' '}
 				<select
 					value={state.sortCriteria}
@@ -57,17 +54,39 @@ export function App() {
 					}
 				>
 					<option value="title">Title</option>
-					<option value="createdAt">Date created (newer first)</option>
+					<option value="createdAt">Date created</option>
 				</select>
-			</div>
-
+			</div> */}
 			{state.isLoading ? (
-				<p>loading ideas…</p>
-			) : sortedIdeas.length === 0 ? (
-				<p>No ideas yet!</p>
+				<Grid>
+					<Loader />
+				</Grid>
 			) : (
 				<Grid>
-					{sortedIdeas.map(idea => (
+					<button
+						type="button"
+						onClick={() =>
+							createIdea().then(idea =>
+								dispatch({ type: 'IDEA_CREATED', payload: idea })
+							)
+						}
+						css={css`
+							background-color: transparent;
+							border: var(--border);
+							border-radius: 2px;
+							animation: ${tileEnterKeyframes} 666ms backwards;
+
+							&:focus,
+							&:hover {
+								outline: none;
+								background-color: var(--focus-color);
+							}
+						`}
+						title="Add new idea"
+					>
+						<AddIcon />
+					</button>
+					{sortedIdeas.map((idea, index) => (
 						<IdeaTile
 							key={idea.id}
 							idea={idea}
@@ -85,6 +104,7 @@ export function App() {
 									dispatch({ type: 'IDEA_UPDATED', payload: idea })
 								);
 							}}
+							enterDelay={(index + 1) * 50}
 						/>
 					))}
 				</Grid>
@@ -94,7 +114,6 @@ export function App() {
 }
 
 type Action =
-	| { type: 'FETCH_IDEAS' }
 	| { type: 'IDEAS_FETCHED'; payload: Record<string, Idea> }
 	| { type: 'IDEA_CREATED'; payload: Idea }
 	| { type: 'IDEA_UPDATED'; payload: Idea }
@@ -103,9 +122,6 @@ type Action =
 
 const reducer = produce((draft: State, action: Action) => {
 	switch (action.type) {
-		case 'FETCH_IDEAS':
-			draft.isLoading = true;
-			break;
 		case 'IDEAS_FETCHED':
 			draft.isLoading = false;
 			draft.ideas = action.payload;
@@ -136,17 +152,46 @@ function getSortedIdeas(
 function sortByTitle(idea1: Idea, idea2: Idea) {
 	const title1 = idea1.title || '';
 	const title2 = idea2.title || '';
-	return title1 < title2 ? -1 : title1 > title2 ? 1 : 0;
+	return title1 < title2
+		? -1
+		: title1 > title2
+		? 1
+		: sortByCreationDate(idea1, idea2);
 }
 
 function sortByCreationDate(idea1: Idea, idea2: Idea) {
 	return idea2.createdAt - idea1.createdAt;
 }
 
-export const Grid = styled.ul`
+const Grid = styled.ol`
 	display: grid;
 	grid-template-columns: repeat(auto-fill, 150px);
 	grid-template-rows: repeat(auto-fill, 150px);
 	grid-gap: 10px;
 	grid-auto-rows: 150px;
 `;
+
+const loaderKeyframes = keyframes`
+	0% {
+		opacity: 0;
+	}
+`;
+
+const LoaderBox = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: var(--border);
+	border-radius: 2px;
+	animation: ${loaderKeyframes} 666ms alternate infinite both;
+`;
+
+function Loader() {
+	return (
+		<>
+			<LoaderBox />
+			<LoaderBox style={{ animationDelay: '100ms' }} />
+			<LoaderBox style={{ animationDelay: '200ms' }} />
+		</>
+	);
+}
