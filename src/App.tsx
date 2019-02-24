@@ -1,5 +1,6 @@
 import React, { useEffect, useReducer } from 'react';
 import styled from 'styled-components/macro';
+import produce from 'immer';
 import { GlobalStyles } from './styles';
 import { getIdeas, createIdea, deleteIdea, updateIdea } from './api';
 import { Idea } from './types';
@@ -100,35 +101,28 @@ type Action =
 	| { type: 'IDEA_DELETED'; payload: string }
 	| { type: 'UPDATE_SORT_CRITERIA'; payload: SortCriteria };
 
-function reducer(state: State, action: Action) {
+const reducer = produce((draft: State, action: Action) => {
 	switch (action.type) {
 		case 'FETCH_IDEAS':
-			return { ...state, isLoading: true };
+			draft.isLoading = true;
+			break;
 		case 'IDEAS_FETCHED':
-			return {
-				...state,
-				isLoading: false,
-				ideas: action.payload,
-			};
+			draft.isLoading = false;
+			draft.ideas = action.payload;
+			break;
 		case 'IDEA_CREATED':
 		case 'IDEA_UPDATED':
-			const idea = action.payload;
-			return {
-				...state,
-				ideas: { ...state.ideas, [idea.id]: idea },
-			};
+			draft.ideas[action.payload.id] = action.payload;
+			break;
 		case 'IDEA_DELETED':
-			const { [action.payload]: removedIdea, ...updatedIdeas } = state.ideas;
-			return {
-				...state,
-				ideas: updatedIdeas,
-			};
+			const deletedId = action.payload;
+			delete draft.ideas[deletedId];
+			break;
 		case 'UPDATE_SORT_CRITERIA':
-			return { ...state, sortCriteria: action.payload };
-		default:
-			throw new Error();
+			draft.sortCriteria = action.payload;
+			break;
 	}
-}
+});
 
 function getSortedIdeas(
 	ideas: Record<string, Idea>,

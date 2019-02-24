@@ -1,4 +1,5 @@
 import uuid from 'uuid/v4';
+import produce from 'immer';
 import { Idea } from './types';
 import { DEFAULT_IDEAS } from './data';
 
@@ -12,9 +13,10 @@ export function createIdea() {
 		createdAt: new Date().getTime(),
 	};
 
-	const ideas = getStoredIdeas();
-	const updatedIdeas = { ...ideas, [idea.id]: idea };
-	storeIdeas(updatedIdeas);
+	const ideas = produce(getStoredIdeas(), draft => {
+		draft[idea.id] = idea;
+	});
+	storeIdeas(ideas);
 
 	return delay(idea);
 }
@@ -26,16 +28,20 @@ type UpdateIdeaInput = {
 };
 
 export function updateIdea({ id, title, body }: UpdateIdeaInput) {
-	const ideas = getStoredIdeas();
-	const updatedIdeas = { ...ideas, [id]: { ...ideas[id], title, body } };
-	storeIdeas(updatedIdeas);
+	const ideas = produce(getStoredIdeas(), draft => {
+		draft[id].title = title;
+		draft[id].body = body;
+	});
+	storeIdeas(ideas);
 
-	return delay(updatedIdeas[id]);
+	return delay(ideas[id]);
 }
 
 export function deleteIdea(id: string) {
-	const { [id]: removedIdea, ...updatedIdeas } = getStoredIdeas();
-	storeIdeas(updatedIdeas);
+	const ideas = produce(getStoredIdeas(), draft => {
+		delete draft[id];
+	});
+	storeIdeas(ideas);
 
 	return delay(id);
 }
