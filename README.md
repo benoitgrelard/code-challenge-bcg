@@ -21,5 +21,5 @@ Assume that the back-end makes of use of standard HTTP success and error codes.
 - [x] Implement sorting that changes with a dropdown. The sort options should be title and created_date.
 - [x] Implement a character counter that is displayed when the body field is edited and the remaining character count is <15. Hide the counter when the remaining characters count is >15.
 - [x] Use localStorage to persist the ideas so that they persist after a page refresh.
-- [ ] Implement a notification to tell the user that edits have been successfully saved. Ensure the
+- [x] Implement a notification to tell the user that edits have been successfully saved. Ensure the
       notification isn’t intrusive.

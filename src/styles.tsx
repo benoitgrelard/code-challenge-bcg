@@ -57,7 +57,7 @@ export const GlobalStyles = createGlobalStyle`
 		-moz-osx-font-smoothing: inherit;
 	}
 
-	input, textarea {
+	input, textarea, select {
 		color: inherit;
 		font-family: inherit;
 		-webkit-font-smoothing: inherit;

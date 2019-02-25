@@ -1,13 +1,14 @@
 import React, { FC, useState } from 'react';
 import styled, { css, keyframes } from 'styled-components/macro';
 import { Idea } from './types';
-import { DeleteIcon } from './icons';
+import { DeleteIcon, LoadingIcon } from './icons';
 
 type UpdateKey = 'title' | 'body';
 
 type IdeaTileProps = {
 	idea: Idea;
 	onDelete: () => void;
+	isDeleting: boolean;
 	onUpdate: (updateKey: UpdateKey, value: string) => void;
 	enterDelay: number;
 };
@@ -17,6 +18,7 @@ const MAX_BODY_LENGTH = 140;
 export const IdeaTile: FC<IdeaTileProps> = ({
 	idea,
 	onDelete,
+	isDeleting,
 	onUpdate,
 	enterDelay,
 }) => {
@@ -96,6 +98,7 @@ export const IdeaTile: FC<IdeaTileProps> = ({
 			<button
 				type="button"
 				onClick={onDelete}
+				disabled={isDeleting}
 				css={css`
 					${offBoxStyles};
 					opacity: 0;
@@ -109,7 +112,7 @@ export const IdeaTile: FC<IdeaTileProps> = ({
 					}
 				`}
 			>
-				<DeleteIcon />
+				{isDeleting ? <LoadingIcon /> : <DeleteIcon />}
 			</button>
 		</li>
 	);
@@ -125,6 +128,7 @@ const Input = styled.input`
 	&:focus {
 		outline: none;
 		background-color: var(--focus-color);
+		box-shadow: inset 0 -2px white;
 	}
 
 	&::placeholder {
