@@ -1,5 +1,14 @@
 # Ideas board
 
+## Implementation Notes
+
+- The code is fairly pragmatic as it's a simple app
+- It was only tested in Chrome and no effort was spent on cross browser (using css grid, custom properties, etc)
+- The backend is simulated with randomly delayed promises
+- The UI doesn't make any optimistic updates, but rather waits for each “call” to complete before updating
+
+## Task
+
 Consider an idea/memo board where you can create an idea, edit existing ideas and delete old ideas. Each idea should have a unique id (read-only), a creation date (read-only), a title (editable), and a body (editable), which can contain a maximum of 140 characters. Assume that there is a backend REST service with the following endpoints:
 
 - `GET ideas/ -> [{“id”: “:id”, “created_date”: “:created_date”, “title”: “:title”, “body”: “:body”}, {}, ...]`
