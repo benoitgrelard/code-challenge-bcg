@@ -6,6 +6,9 @@
 - It was only tested in Chrome and no effort was spent on cross browser (using css grid, custom properties, etc)
 - The backend is simulated with randomly delayed promises
 - The UI doesn't make any optimistic updates, but rather waits for each “call” to complete before updating
+- I took a few liberties on the design front to improve user experience:
+  - 150 \* 150 was too small
+  - other treatment for input focus
 
 ## Challenge
 
