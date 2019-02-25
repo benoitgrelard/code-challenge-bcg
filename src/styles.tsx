@@ -15,18 +15,14 @@ export const GlobalStyles = createGlobalStyle`
 		line-height: 1.5;
 		-webkit-text-size-adjust: 100%;
 		--hue: 256;
-		--background-color: hsl(var(--hue), 100%, 45%);
-		--border-color: hsl(var(--hue), 80%, 65%);
-		--border: 1px solid var(--border-color);
-		--focus-color: hsl(var(--hue), 100%, 40%);
+		--color-primary: hsl(var(--hue), 100%, 45%);
 	}
 
 	body {
 		margin: 0;
-		padding: 5vw;
-		background-color: var(--background-color);
-		color: white;
-		/* System Fonts as used by GitHub */
+		padding: 0;
+		background-color: hsl(var(--hue), 40%, 96%);
+		color: var(--color-primary);
 		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
 			Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 		font-size: 1rem;
@@ -34,8 +30,14 @@ export const GlobalStyles = createGlobalStyle`
 		overflow-x: hidden;
 	}
 
+	#root {
+		display: flex;
+		flex-direction: column;
+		height: 100vh;
+	}
+
 	::selection {
-		background-color: hsl(var(--hue), 80%, 85%);
+		background-color: hsl(var(--hue), 70%, 92%);
 	}
 
 	* {

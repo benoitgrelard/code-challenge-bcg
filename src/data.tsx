@@ -10,8 +10,8 @@ const IDEA_1: Idea = {
 
 const IDEA_2: Idea = {
 	id: uuid(),
-	title: 'Cool thing',
-	body: 'Try that',
+	title: 'Something long',
+	body: `This is a pretty long description, let's try and make it as long as possible for the counter to kick in. Is it going to start now? or never?`,
 	createdAt: new Date().getTime(),
 };
 

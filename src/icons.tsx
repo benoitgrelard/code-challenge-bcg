@@ -4,8 +4,8 @@ import { keyframes, css } from 'styled-components/macro';
 export function AddIcon() {
 	return (
 		<svg
-			width={32}
-			height={32}
+			width="1em"
+			height="1em"
 			viewBox="0 0 24 24"
 			fill="none"
 			stroke="currentColor"
@@ -20,8 +20,8 @@ export function AddIcon() {
 export function DeleteIcon() {
 	return (
 		<svg
-			width={24}
-			height={24}
+			width="1em"
+			height="1em"
 			viewBox="0 0 24 24"
 			fill="none"
 			stroke="currentColor"
@@ -36,8 +36,8 @@ export function DeleteIcon() {
 export function LoadingIcon() {
 	return (
 		<svg
-			width={24}
-			height={24}
+			width="1em"
+			height="1em"
 			viewBox="0 0 24 24"
 			fill="none"
 			stroke="currentColor"

@@ -39,20 +39,8 @@ export function App() {
 	return (
 		<>
 			<GlobalStyles />
-			<header
-				css={css`
-					display: flex;
-					align-items: baseline;
-				`}
-			>
-				<h1
-					css={css`
-						font-size: 3rem;
-						font-weight: 900;
-					`}
-				>
-					Ideas Board
-				</h1>
+			<Header>
+				<Logo>Ideas Board</Logo>
 
 				{state.isShowingUpdateNotice && (
 					<p
@@ -64,7 +52,7 @@ export function App() {
 					</p>
 				)}
 
-				<select
+				<SortingOptions
 					value={state.sortCriteria}
 					onChange={event =>
 						dispatch({
@@ -72,85 +60,65 @@ export function App() {
 							payload: event.target.value as SortCriteria,
 						})
 					}
-					css={css`
-						appearance: none;
-						background: none;
-						border: none;
-						opacity: 0.5;
-						margin-left: auto;
-
-						&:focus {
-							outline: none;
-							opacity: 1;
-						}
-					`}
 				>
 					<option value="title">sort › title</option>
 					<option value="createdAt">sort › date</option>
-				</select>
-			</header>
+				</SortingOptions>
+			</Header>
 
-			{state.isLoading ? (
-				<Grid>
-					<Loader />
-				</Grid>
-			) : (
-				<Grid>
-					<button
-						type="button"
-						disabled={state.isCreating}
-						onClick={() => {
-							dispatch({ type: 'CREATE_IDEA' });
-							createIdea().then(idea =>
-								dispatch({ type: 'IDEA_CREATED', payload: idea })
-							);
-						}}
-						css={css`
-							background-color: transparent;
-							border: var(--border);
-							border-radius: 2px;
-							animation: ${tileEnterKeyframes} 666ms backwards;
-
-							&:focus,
-							&:hover {
-								outline: none;
-								background-color: var(--focus-color);
-							}
-						`}
-						title="Add new idea"
-					>
-						{state.isCreating ? <LoadingIcon /> : <AddIcon />}
-					</button>
-					{sortedIdeas.map((idea, index) => (
-						<IdeaTile
-							key={`${idea.id} – ${state.sortCriteria}`}
-							idea={idea}
-							onDelete={() => {
-								dispatch({ type: 'DELETE_IDEA', payload: idea.id });
-								deleteIdea(idea.id).then(id =>
-									dispatch({ type: 'IDEA_DELETED', payload: id })
+			<Main>
+				{state.isLoading ? (
+					<Grid>
+						<LoaderBox />
+						<LoaderBox style={{ animationDelay: '100ms' }} />
+						<LoaderBox style={{ animationDelay: '200ms' }} />
+					</Grid>
+				) : (
+					<Grid>
+						<AddButton
+							type="button"
+							disabled={state.isCreating}
+							onClick={() => {
+								dispatch({ type: 'CREATE_IDEA' });
+								createIdea().then(idea =>
+									dispatch({ type: 'IDEA_CREATED', payload: idea })
 								);
 							}}
-							isDeleting={state.deletingId === idea.id}
-							onUpdate={(updateKey, value) => {
-								const ideaFields =
-									updateKey === 'title'
-										? { title: value, body: idea.body }
-										: { title: idea.title, body: value };
-								updateIdea({ id: idea.id, ...ideaFields }).then(idea => {
-									dispatch({ type: 'IDEA_UPDATED', payload: idea });
-									dispatch({ type: 'SHOW_UPDATE_NOTICE' });
-									setTimeout(
-										() => dispatch({ type: 'HIDE_UPDATE_NOTICE' }),
-										1000
+							title="Add new idea"
+						>
+							{state.isCreating ? <LoadingIcon /> : <AddIcon />}
+						</AddButton>
+						{sortedIdeas.map((idea, index) => (
+							<IdeaTile
+								key={`${idea.id} – ${state.sortCriteria}`}
+								idea={idea}
+								onDelete={() => {
+									dispatch({ type: 'DELETE_IDEA', payload: idea.id });
+									deleteIdea(idea.id).then(id =>
+										dispatch({ type: 'IDEA_DELETED', payload: id })
 									);
-								});
-							}}
-							enterDelay={(index + 1) * 50}
-						/>
-					))}
-				</Grid>
-			)}
+								}}
+								isDeleting={state.deletingId === idea.id}
+								onUpdate={(updateKey, value) => {
+									const ideaFields =
+										updateKey === 'title'
+											? { title: value, body: idea.body }
+											: { title: idea.title, body: value };
+									updateIdea({ id: idea.id, ...ideaFields }).then(idea => {
+										dispatch({ type: 'IDEA_UPDATED', payload: idea });
+										dispatch({ type: 'SHOW_UPDATE_NOTICE' });
+										setTimeout(
+											() => dispatch({ type: 'HIDE_UPDATE_NOTICE' }),
+											1000
+										);
+									});
+								}}
+								enterDelay={(index + 1) * 50}
+							/>
+						))}
+					</Grid>
+				)}
+			</Main>
 		</>
 	);
 }
@@ -225,29 +193,68 @@ function sortByCreationDate(idea1: Idea, idea2: Idea) {
 	return idea2.createdAt - idea1.createdAt;
 }
 
+const Header = styled.header`
+	flex-shrink: 0;
+	display: flex;
+	align-items: baseline;
+	padding: 5vw 5vw 0;
+	background-color: var(--color-primary);
+	color: white;
+`;
+
+const Logo = styled.h1`
+	font-size: 3rem;
+	font-weight: 900;
+`;
+
+const SortingOptions = styled.select`
+	appearance: none;
+	background: none;
+	border: none;
+	opacity: 0.5;
+	margin-left: auto;
+
+	&:focus {
+		outline: none;
+		opacity: 1;
+	}
+`;
+
+const Main = styled.main`
+	flex: 1;
+	padding: 5vw;
+`;
+
 const Grid = styled.ol`
 	display: grid;
-	grid-template-columns: repeat(auto-fill, 150px);
-	grid-template-rows: repeat(auto-fill, 150px);
-	grid-gap: 10px;
-	grid-auto-rows: 150px;
+	grid-template-columns: repeat(auto-fill, 200px);
+	grid-template-rows: repeat(auto-fill, 200px);
+	grid-gap: 18px;
+	grid-auto-rows: 200px;
+`;
+
+const AddButton = styled.button`
+	background-color: transparent;
+	border: 1px solid var(--color-primary);
+	border-radius: 2px;
+	font-size: 2rem;
+	animation: ${tileEnterKeyframes} 666ms backwards;
+	transition: 333ms;
+
+	&:focus,
+	&:hover {
+		outline: none;
+		background-color: var(--color-primary);
+		border-color: var(--color-primary);
+		color: white;
+	}
 `;
 
 const LoaderBox = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border: var(--border);
+	border: 1px solid var(--color-primary);
 	border-radius: 2px;
 	animation: ${tileEnterKeyframes} 666ms alternate infinite both;
 `;
-
-function Loader() {
-	return (
-		<>
-			<LoaderBox />
-			<LoaderBox style={{ animationDelay: '100ms' }} />
-			<LoaderBox style={{ animationDelay: '200ms' }} />
-		</>
-	);
-}
