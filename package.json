@@ -9,7 +9,7 @@
 		"@types/react-dom": "16.8.2",
 		"@types/styled-components": "^4.1.10",
 		"@types/uuid": "^3.4.4",
-		"immer": "^2.0.0",
+		"immer": "^9.0.6",
 		"polished": "^3.0.0",
 		"react": "^16.8.3",
 		"react-dom": "^16.8.3",
